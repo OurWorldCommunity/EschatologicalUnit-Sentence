@@ -1,0 +1,8 @@
+name: EschatologicalUnit.Sentence
+main: online.smyhw.EschatologicalUnit.Sentence.smyhw
+version: 1.0.0
+author: smyhw
+commands:
+  euS:
+    description: euS
+    usage: /<command>
