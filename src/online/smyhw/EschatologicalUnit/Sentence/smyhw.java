@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.Collection;
@@ -20,6 +22,7 @@ import org.bukkit.command.CommandSender;
 
 public class smyhw extends JavaPlugin implements Listener 
 {
+	public static Plugin smyhw_;
 	public static Logger loger;
 	public static FileConfiguration configer;
 	public static String prefix;
@@ -31,6 +34,7 @@ public class smyhw extends JavaPlugin implements Listener
 		getLogger().info("正在加载环境...");
 		loger=getLogger();
 		configer = getConfig();
+		smyhw_=this;
 		getLogger().info("正在加载配置...");
 		prefix = configer.getString("config.prefix");
 		delayed = configer.getInt("config.delayed");
@@ -63,36 +67,33 @@ public class smyhw extends JavaPlugin implements Listener
                 	loger.warning(prefix+"使用者<"+sender.getName()+">试图非法使用指令<"+args+">{参数不足}");
                 	return true;
                 }
-                List<String> temp1 = configer.getStringList("data.Sentence."+args[0]);
-                new showThread(temp1);
+                new showThread(configer.getStringList("data.Sentence."+args[0]).iterator());
                 return true;                                                       
         }
        return false;
 	}
 }
 
-class showThread extends Thread
+class showThread extends BukkitRunnable
 {
-	public List<String> msg;
-	public showThread(List<String> msg)
+	public Iterator<String> msg;
+	public showThread(Iterator<String> msg)
 	{
 		this.msg = msg;
-		this.start();
+		this.runTaskTimer(smyhw.smyhw_,0,smyhw.delayed*20);
 	}
 	
 	public void run()
 	{
-
-        Iterator<String> temp2 =  msg.iterator();
-        while(temp2.hasNext())
+        if(msg.hasNext())
         {
-        	String mmsg = temp2.next();
+        	String mmsg = msg.next();
         	mmsg = mmsg.replace('&', '§');
         	Bukkit.broadcastMessage(mmsg);
-        	try {Thread.sleep(smyhw.delayed*1000);} catch (InterruptedException e)
-        	{
-        		smyhw.loger.warning("消息延迟发送时产生异常！");e.printStackTrace();
-			}
+        }
+        else
+        {
+        	this.cancel();
         }
 	}
 }
