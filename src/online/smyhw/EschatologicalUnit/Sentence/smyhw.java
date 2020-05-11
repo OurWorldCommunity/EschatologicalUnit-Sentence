@@ -67,6 +67,12 @@ public class smyhw extends JavaPlugin implements Listener
                 	loger.warning(prefix+"使用者<"+sender.getName()+">试图非法使用指令<"+args+">{参数不足}");
                 	return true;
                 }
+                if(args[0].equals("reload"))
+                {
+                	reloadConfig();
+                	configer=getConfig();
+                	sender.sendMessage(prefix+"重载配置文件...");
+                }
                 new showThread(configer.getStringList("data.Sentence."+args[0]).iterator());
                 return true;                                                       
         }
